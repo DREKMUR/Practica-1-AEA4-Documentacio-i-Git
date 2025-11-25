@@ -2,8 +2,20 @@ package documentacio_git;
 
 import java.util.List;
 
+/**
+ * Classe principal de l'aplicació.
+ * <p>
+ * Conté el mètode main i serveix per executar una simulació del funcionament
+ * del sistema de gestió d'inventari i comprovar que les classes funcionen correctament.
+ * </p>
+ */
 public class Main {
 
+	/**
+	 * Mètode d'entrada principal.
+	 * Executa una sèrie de proves: afegir materials, prestar-los i retornar-los.
+	 * * @param args Arguments de la línia de comandes (no utilitzats).
+	 */
 	public static void main(String[] args) {
 		InventariService service = new InventariService();
 
@@ -44,6 +56,10 @@ public class Main {
 
 	}
 
+	/**
+	 * Mètode auxiliar per imprimir per consola la llista de materials disponibles.
+	 * * @param service La instància del servei d'inventari per consultar dades.
+	 */
 	private static void printDisponibles(InventariService service) {
 		List<Material> disponibles = service.getAvailableMaterials();
 		
