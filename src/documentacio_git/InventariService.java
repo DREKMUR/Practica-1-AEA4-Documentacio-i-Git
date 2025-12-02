@@ -37,9 +37,9 @@ public class InventariService {
      * Verifica si el material existeix i està disponible. Si és així, canvia el seu
      * estat a PRESTADO, crea el registre del préstec i el guarda.
      * </p>
-     * * @param user Nom o identificador de l'usuari que sol·licita el préstec.
-     * @param materialId Identificador del material a prestar.
-     * @return true si el préstec s'ha realitzat correctament, false si no era possible.
+     * * @param user El nom de l'usuari que demana el préstec.
+     * @param materialId L'identificador del material a prestar.
+     * @return true si el préstec s'ha fet correctament, false si no s'ha pogut fer.
      */
     public boolean registerPrestec(String user, int materialId) {
         Material m = repository.findMaterialById(materialId);
@@ -84,8 +84,8 @@ public class InventariService {
     }
 
     /**
-     * Compta el nombre total de materials registrats al sistema.
-     * * @return El nombre enter total de materials.
+     * Compta el nombre total de materials registrats a l'inventari.
+     * * @return El nombre total d'ítems (int).
      */
     public int countStockTotal() {
         return repository.getAllMaterials().size();

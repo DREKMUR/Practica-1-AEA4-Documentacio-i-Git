@@ -57,13 +57,12 @@ public class Prestec {
      * Calcula els dies de retard en la devolució.
      * Si el préstec és actiu, compara amb la data actual.
      * Si el préstec ha finalitzat, compara amb la data de devolució real.
-     * * @return El nombre de dies de retard (0 si no hi ha retard).
+     * * @return El nombre de dies de retard (0 si no hi ha retard o si és negatiu).
      */
     public long retardDays() {
-        LocalDate comparedDate = (this.active) ? LocalDate.now() : this.endDate;
+        LocalDate fechaComparacion = (active) ? LocalDate.now() : endDate;
         
-        long days = ChronoUnit.DAYS.between(this.expectedDate, comparedDate);
-        
-        return (days > 0) ? days : 0;
+        long dias = ChronoUnit.DAYS.between(expectedDate, fechaComparacion);
+        return (dias > 0) ? dias : 0;
     }
 }

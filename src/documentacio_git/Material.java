@@ -85,6 +85,6 @@ public class Material {
      * * @return true si l'estat és DISPONIBLE, false en cas contrari.
      */
     public boolean isAvailable() {
-        return MaterialStates.DISPONIBLE == (this.state);
+        return this.state == MaterialStates.DISPONIBLE;
     }
 }

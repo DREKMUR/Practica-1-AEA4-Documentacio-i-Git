@@ -1,80 +1,125 @@
 package documentacio_git;
 
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Classe principal de l'aplicació.
  * <p>
- * Conté el mètode main i serveix per executar una simulació del funcionament
- * del sistema de gestió d'inventari i comprovar que les classes funcionen correctament.
+ * Conté el menú principal per interactuar amb el sistema de gestió d'inventari.
+ * Permet afegir materials, prestar-los, retornar-los i llistar-los.
  * </p>
+ * @author Derek Murillo Fernandez
  */
 public class Main {
-
-    /**
-     * Constructor per defecte.
-     */
-    public Main() {
-        // Constructor buit per complir amb Javadoc
-    }
-
     /**
      * Mètode d'entrada principal.
-     * Executa una sèrie de proves: afegir materials, prestar-los i retornar-los.
-     * * @param args Arguments de la línia de comandes (no utilitzats).
+     * Inicia l'aplicació i mostra el menú d'opcions.
+     * @param args Arguments de la línia de comandes.
      */
     public static void main(String[] args) {
         InventariService service = new InventariService();
+        Scanner scanner = new Scanner(System.in);
+        boolean sortir = false;
 
-        System.out.println("\n--- 1. Añadiendo Materiales ---");
-        service.addNewMaterial(1, "Portátil HP", 1001);
-        service.addNewMaterial(2, "Proyector Epson", 2002);
-        service.addNewMaterial(3, "Tablet Samsung", 3003);
+        // Bucle del menú principal
+        while (!sortir) {
+            System.out.println("\n=== MENÚ DE GESTIÓ D'INVENTARI ===");
+            System.out.println("1. Afegir nou material");
+            System.out.println("2. Realitzar préstec");
+            System.out.println("3. Retornar material");
+            System.out.println("4. Veure materials disponibles");
+            System.out.println("5. Veure stock total");
+            System.out.println("0. Sortir");
+            System.out.print("Selecciona una opció: ");
 
-        System.out.println("Total de items en inventario: " + service.countStockTotal());
+            // Llegim l'opció com a text i la passem a numero per evitar errors de salt de línia
+            int opcio = Integer.parseInt(scanner.nextLine());
 
-        System.out.println("\n--- 2. Consultando materiales disponibles (Inicial) ---");
-        printDisponibles(service);
+            switch (opcio) {
+                case 1:
+                    // Opció 1: Afegir Material
+                    System.out.println("\n--- Afegir Material ---");
+                    System.out.print("Introdueix l'ID del material (numèric): ");
+                    int id = Integer.parseInt(scanner.nextLine());
+                    
+                    System.out.print("Introdueix el nom del material: ");
+                    String nom = scanner.nextLine();
+                    
+                    System.out.print("Introdueix el número de sèrie: ");
+                    int serie = Integer.parseInt(scanner.nextLine());
+                    
+                    service.addNewMaterial(id, nom, serie);
+                    System.out.println("Material afegit correctament!");
+                    break;
 
-        System.out.println("\n--- 3. Realizar un préstamo ---");
-        boolean prestamoExitoso = service.registerPrestec("Profesora Paula Molina", 1);
+                case 2:
+                    // Opció 2: Prestar
+                    System.out.println("\n--- Realitzar Préstec ---");
+                    System.out.print("Nom de la persona que agafa el material: ");
+                    String usuari = scanner.nextLine();
+                    
+                    System.out.print("ID del material a prestar: ");
+                    int idPrestar = Integer.parseInt(scanner.nextLine());
+                    
+                    boolean prestecFet = service.registerPrestec(usuari, idPrestar);
+                    
+                    if (prestecFet) {
+                        System.out.println("Préstec realitzat amb èxit a " + usuari + ".");
+                    } else {
+                        System.out.println("Error: El material no existeix o ja està prestat.");
+                    }
+                    break;
 
-        if (prestamoExitoso) {
-            System.out.println("Préstamo realizado con éxito a la profesora Paula Molina.");
-        } else {
-            System.out.println("Error al realizar el préstamo.");
+                case 3:
+                    // Opció 3: Retornar
+                    System.out.println("\n--- Retornar Material ---");
+                    System.out.print("ID del material a retornar: ");
+                    int idRetorn = Integer.parseInt(scanner.nextLine());
+                    
+                    service.returnMaterial(idRetorn);
+                    System.out.println("Operació de retorn processada.");
+                    break;
+
+                case 4:
+                    // Opció 4: Llistar disponibles
+                    System.out.println("\n--- Materials Disponibles ---");
+                    printDisponibles(service);
+                    break;
+
+                case 5:
+                    // Opció 5: Stock Total
+                    System.out.println("\n--- Stock Total ---");
+                    int total = service.countStockTotal();
+                    System.out.println("Total d'ítems registrats a l'inventari: " + total);
+                    break;
+
+                case 0:
+                    // Opció 0: Sortir
+                    System.out.println("Tancant l'aplicació...");
+                    sortir = true;
+                    break;
+
+                default:
+                    System.out.println("Opció no vàlida. Torna-ho a provar.");
+            }
         }
-
-        System.out.println("\n--- 4. Consultando materiales disponibles (Despues del prestamo) ---");
-        printDisponibles(service);
-
-        System.out.println("\n--- 5. Intentando prestar material ya ocupado ---");
-        boolean intentoFallido = service.registerPrestec("Alumno Derek Murillo", 1);
-        if (!intentoFallido) {
-            System.out.println("El sistema no puede prestar el mismo material 2 veces.");
-        } else {
-            System.err.println("Error: El sistema ha permitido prestar algo que no estaba disponible.");
-        }
-
-        System.out.println("\n--- 6. Devolver material ---");
-        service.returnMaterial(1);
         
-        printDisponibles(service);
-
+        scanner.close();
     }
 
     /**
      * Mètode auxiliar per imprimir per consola la llista de materials disponibles.
-     * * @param service La instància del servei d'inventari per consultar dades.
+     * @param service La instància del servei d'inventari per consultar dades.
      */
     private static void printDisponibles(InventariService service) {
         List<Material> disponibles = service.getAvailableMaterials();
         
         if (disponibles.isEmpty()) {
-            System.err.println("No hay materiales disponibles");
+            System.out.println("No hi ha materials disponibles en aquest moment.");
         } else {
             for (Material m : disponibles) {
-                System.out.println("- [" + m.getId() + "] " + m.getName() + " | Estado: " + m.getState());
+                System.out.println("- [ID: " + m.getId() + "] " + m.getName() + " | Estat: " + m.getState());
             }
         }
     }
